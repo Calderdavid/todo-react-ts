@@ -3,13 +3,20 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { addTodo } from "@/db/controller";
+import { NewTodo } from "@/db/supabase";
 import { Plus, Trash2 } from "lucide-react"
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast"
+
+
 
 interface TaskType {
     id: number;
-    text: string;
-    completed: boolean;
+    user_id: string;
+    task: string;
+    is_completed: boolean;
+    created_at: Date;
 }
 
 
@@ -17,6 +24,33 @@ export const Tasks = () => {
 
     const [item, setItem] = useState<TaskType[]>([]);
     const [todo, setTodo] = useState("");
+            
+    const { toast } = useToast()
+    const userId: string = 'user123';
+
+    const handleAddTodo = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (todo.trim() !== "") {
+            try {
+                const newTodo: NewTodo = {
+                    user_id: userId,
+                    task: todo,
+                    is_completed: false,
+                }
+                const addedTodo = await addTodo(newTodo)
+                setItem([...item, addedTodo])
+                setTodo("")
+            } catch (error) {
+                console.log(error)
+                toast({
+                    title: 'Error',
+                    description: 'No se pudo añadir la tarea',
+                    variant: 'destructive',
+                })
+            }
+        }
+    }
 
 
     const addTask = (e: React.FormEvent) => {
@@ -25,8 +59,10 @@ export const Tasks = () => {
         if(todo.trim() !== "") {
             setItem([...item, {
                 id: Date.now(),
-                text: todo,
-                completed: false,
+                user_id: userId,
+                task: todo,
+                is_completed: false,
+                created_at: new Date(),
             }])
         }
 
@@ -35,7 +71,7 @@ export const Tasks = () => {
     }
 
     const toggleTask = (id: number) => {
-        setItem(item.map(task => task.id === id ? {...task, completed: !task.completed} : task)) //update the task
+        setItem(item.map(task => task.id === id ? {...task, completed: !task.is_completed} : task)) //update the task
     }
 
     const deleteTask = (id: number) => {
@@ -52,7 +88,7 @@ export const Tasks = () => {
                 <CardTitle>ToDo App</CardTitle>
             </CardHeader>
 
-            <form onSubmit={addTask} className="flex space-x-2 mb-4">
+            <form onSubmit={handleAddTodo} className="flex space-x-2 mb-4">
                 <Input
                     type="text"
                     placeholder="Add a new task"
@@ -71,11 +107,11 @@ export const Tasks = () => {
                     item.map(task => (
                         <div key={task.id} className="flex items-center space-x-2 mb-2">
                             <Checkbox
-                                checked={task.completed}
+                                checked={task.is_completed}
                                 onCheckedChange={() => toggleTask(task.id)}
                             />
-                            <span className={task.completed ? 'line-through text-muted-foreground' : ''}>
-                                {task.text}
+                            <span className={task.is_completed ? 'line-through text-muted-foreground' : ''}>
+                                {task.task}
                             </span>
 
                             <Button variant="ghost" size="icon" onClick={() => deleteTask(task.id)}>
@@ -88,10 +124,6 @@ export const Tasks = () => {
                 }
 
             </ScrollArea>
-
-
-
-
         </Card>
     )
 }
