@@ -1,50 +1,26 @@
-# React + TypeScript + Vite
+# ToDo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una aplicación de gestión de tareas (ToDo App) construida con Vite, TypeScript, React, Shadcn y Supabase. Esta aplicación permite a los usuarios crear, leer, actualizar y eliminar tareas de manera sencilla.
 
-Currently, two official plugins are available:
+## Tecnologías Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Vite**: Un entorno de desarrollo rápido para proyectos de JavaScript.
+- **TypeScript**: Un superconjunto de JavaScript que añade tipos estáticos.
+- **React**: Una biblioteca para construir interfaces de usuario.
+- **Shadcn**: Un conjunto de componentes UI para React que facilita el diseño.
+- **Supabase**: Una plataforma backend que proporciona una base de datos y autenticación.
 
-## Expanding the ESLint configuration
+## Características
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Creación, edición y eliminación de tareas.
+- Visualización de tareas pendientes y completadas.
+- Interfaz de usuario moderna y responsiva.
 
-- Configure the top-level `parserOptions` property like this:
+## Instalación
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Sigue estos pasos para configurar el proyecto en tu máquina local:
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. **Clona el repositorio**:
+   ```bash
+   git clone https://github.com/tu_usuario/todo-app.git
+   cd todo-app

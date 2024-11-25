@@ -3,10 +3,10 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { addTodo } from "@/db/controller";
+import { addTodo, deleteTodo, fetchTodos, updateTodo } from "@/db/controller";
 import { NewTodo } from "@/db/supabase";
 import { Plus, Trash2 } from "lucide-react"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast"
 
 
@@ -28,6 +28,24 @@ export const Tasks = () => {
     const { toast } = useToast()
     const userId: string = 'user123';
 
+    useEffect(() => {
+      loadTodos(); //load the todos when the component is mounted
+    }, [])
+    
+
+    const loadTodos = async () => {
+        try {
+            const fetchedTodos = await fetchTodos(userId);
+            setItem(fetchedTodos);
+        } catch (error) {
+            console.log(error);
+            toast({
+                title: 'Error',
+                description: 'No se pudo cargar las tareas',
+            })
+        }
+    }
+
     const handleAddTodo = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -39,6 +57,7 @@ export const Tasks = () => {
                     is_completed: false,
                 }
                 const addedTodo = await addTodo(newTodo)
+                console.log(addedTodo)
                 setItem([...item, addedTodo])
                 setTodo("")
             } catch (error) {
@@ -52,32 +71,33 @@ export const Tasks = () => {
         }
     }
 
-
-    const addTask = (e: React.FormEvent) => {
-        e.preventDefault(); //prevent to reload the page
-
-        if(todo.trim() !== "") {
-            setItem([...item, {
-                id: Date.now(),
-                user_id: userId,
-                task: todo,
-                is_completed: false,
-                created_at: new Date(),
-            }])
+    const handleToggleTodo = async (id: number, is_completed: boolean) => {
+        try {
+            const updatedTodo = await updateTodo(id, { is_completed: !is_completed }) //update the task
+            setItem(item.map(task => task.id === id ? updatedTodo : task))
+        } catch (error) {
+            console.log(error);
+            toast({
+                title: 'Error',
+                description: 'No se pudo actualizar la tarea',
+                variant: 'destructive',
+            })
         }
-
-        setTodo(""); //clear the input field
-
     }
 
-    const toggleTask = (id: number) => {
-        setItem(item.map(task => task.id === id ? {...task, completed: !task.is_completed} : task)) //update the task
+    const handleDeleteTodo = async (id: number) => {
+        try {
+            await deleteTodo(id)
+            setItem(item.filter(task => task.id !== id))
+        } catch (error) {
+            console.log(error);
+            toast({
+                title: 'Error',
+                description: 'No se pudo eliminar la tarea',
+                variant: 'destructive',
+            })
+        }
     }
-
-    const deleteTask = (id: number) => {
-        setItem(item.filter(task => task.id !== id))
-    }
-
     
 
 
@@ -108,13 +128,13 @@ export const Tasks = () => {
                         <div key={task.id} className="flex items-center space-x-2 mb-2">
                             <Checkbox
                                 checked={task.is_completed}
-                                onCheckedChange={() => toggleTask(task.id)}
+                                onCheckedChange={() => handleToggleTodo(task.id, task.is_completed)}
                             />
                             <span className={task.is_completed ? 'line-through text-muted-foreground' : ''}>
                                 {task.task}
                             </span>
 
-                            <Button variant="ghost" size="icon" onClick={() => deleteTask(task.id)}>
+                            <Button variant="ghost" size="icon" onClick={() => handleDeleteTodo(task.id)}>
                                 <Trash2 className="h-4 w-4" />
                             </Button>
                         </div>
