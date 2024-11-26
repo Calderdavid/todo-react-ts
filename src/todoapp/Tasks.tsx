@@ -41,12 +41,12 @@ export const Tasks = () => {
             console.log(error);
             toast({
                 title: 'Error',
-                description: 'No se pudo cargar las tareas',
+                description: 'No se pudo cargar las tareas', 
             })
         }
     }
 
-    const handleAddTodo = async (e: React.FormEvent) => {
+    const handleAddTodo = async (e: React.FormEvent) => { //handle 
         e.preventDefault();
 
         if (todo.trim() !== "") {

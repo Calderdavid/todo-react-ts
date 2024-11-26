@@ -22,5 +22,5 @@ Sigue estos pasos para configurar el proyecto en tu máquina local:
 
 1. **Clona el repositorio**:
    ```bash
-   git clone https://github.com/tu_usuario/todo-app.git
+   git clone https://github.com/Calderdavid/todo-react-ts.git
    cd todo-app
